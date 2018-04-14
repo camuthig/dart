@@ -13,7 +13,7 @@ void gigasecondTests() {
   // The setUp() function is used to share code between tests. It is executed
   // before every test in a group or test suite.
   setUp(() {
-    birthDate = new DateTime.utc(2015, DateTime.SEPTEMBER, 14);
+    birthDate = new DateTime.utc(2015, DateTime.september, 14);
   });
 
   group("since midnight tests", sinceMidnightTests);
@@ -24,7 +24,7 @@ void gigasecondTests() {
 void sinceMidnightTests() {
   setUp(() {
     gigasecond = new Gigasecond(birthDate);
-    expectedDate = new DateTime.utc(2047, DateTime.MAY, 23, 1, 46, 40);
+    expectedDate = new DateTime.utc(2047, DateTime.may, 23, 1, 46, 40);
   });
 
   test("tells a gigasecond anniversary since midnight", () {
@@ -41,7 +41,7 @@ void atNightTests() {
   setUp(() {
     birthDate = birthDate.add(new Duration(hours: 23, minutes: 59, seconds: 59));
     gigasecond = new Gigasecond(birthDate);
-    expectedDate = new DateTime.utc(2047, DateTime.MAY, 24, 1, 46, 39);
+    expectedDate = new DateTime.utc(2047, DateTime.may, 24, 1, 46, 39);
   });
 
   test("tells the anniversary is next day when you are born at night", () {
@@ -51,9 +51,9 @@ void atNightTests() {
 
 void unixEpochTests() {
   setUp(() {
-    birthDate = new DateTime.utc(1959, DateTime.JULY, 19, 5, 13, 45);
+    birthDate = new DateTime.utc(1959, DateTime.july, 19, 5, 13, 45);
     gigasecond = new Gigasecond(birthDate);
-    expectedDate = new DateTime.utc(1991, DateTime.MARCH, 27, 7, 0, 25);
+    expectedDate = new DateTime.utc(1991, DateTime.march, 27, 7, 0, 25);
   });
 
   test("even works before 1970 (beginning of Unix epoch)", () {

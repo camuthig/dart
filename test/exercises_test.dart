@@ -30,7 +30,7 @@ Future runCmd(List<String> cmds) async {
 Future<String> getPackageName() async {
   final pubspec = new File("pubspec.yaml");
 
-  final packageName = loadYaml(await pubspec.readAsString())["name"];
+  final String packageName = loadYaml(await pubspec.readAsString())["name"];
 
   return packageName;
 }

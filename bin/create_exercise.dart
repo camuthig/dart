@@ -1,5 +1,5 @@
 import "dart:async";
-import "dart:convert";
+import "dart:convert" show json;
 import "dart:io";
 import "package:args/args.dart";
 import "package:path/path.dart" show dirname;
@@ -83,15 +83,15 @@ dev_dependencies:
   test: '<0.13.0'
 """;
 
-String testCaseTemplate(String name, Map<String, Object> testCase, {bool firstTest = true}) {
+String testCaseTemplate(String name, Map<String, dynamic> testCase, {bool firstTest = true}) {
   if (testCase['cases'] != null) {
     // We have a group, not a case
     String description = testCase['description'];
 
     // Build the tests up recursively, only first test should be skipped
     List<String> testList = [];
-    for (Map<String, Object> c in testCase['cases']) {
-      testList.add(testCaseTemplate(name, c, firstTest: firstTest));
+    for (Map<String, Object> caseObj in testCase['cases']) {
+      testList.add(testCaseTemplate(name, caseObj, firstTest: firstTest));
       firstTest = false;
     }
     String tests = testList.join("\n");
@@ -110,7 +110,7 @@ String testCaseTemplate(String name, Map<String, Object> testCase, {bool firstTe
   String description = repr(testCase['description']);
   String resultType = getFriendlyType(testCase['expected']);
   String object = camelCase(name);
-  String method = camelCase(testCase['property']);
+  String method = camelCase(testCase['property'].toString());
   String expected = repr(testCase['expected']);
 
   Map<String, dynamic> input = testCase['input'] as Map<String, dynamic>;
@@ -195,7 +195,7 @@ Future<bool> runProcess(String cmd, List<String> arguments) async {
   return res.exitCode == 0;
 }
 
-Future main(args) async {
+Future main(List<String> args) async {
   final arguments = parser.parse(args);
   final restArgs = arguments.rest;
 
@@ -216,7 +216,7 @@ Future main(args) async {
     String filename = "${arguments['spec-path']}/exercises/$name/canonical-data.json";
     try {
       File canonicalDataJson = new File(filename);
-      final specification = JSON.decode(await canonicalDataJson.readAsString());
+      final Map<String, dynamic> specification = json.decode(await canonicalDataJson.readAsString());
       testCasesString = testCaseTemplate(name, specification);
       print("Found: ${arguments['spec-path']}/exercises/$name/canonical-data.json");
     } on FileSystemException {
@@ -250,7 +250,7 @@ Future main(args) async {
     final dartRoot = "${dirname(Platform.script.toFilePath())}/..";
     final configletLoc = "$dartRoot/bin/configlet";
     final genSuccess = await runProcess(
-        configletLoc, ["generate", "$dartRoot", "--spec-path", arguments["spec-path"], "--only", name]);
+        configletLoc, ["generate", "$dartRoot", "--spec-path", '${arguments['spec-path']}', "--only", name]);
     if (genSuccess) {
       stdout.write("Successfully created README.md\n");
     } else {
